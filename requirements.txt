@@ -1,1 +1,3 @@
-babel==2.9.0
+# The service has no runtime dependencies (standard library only).
+# babel==2.9.0 was listed here but nothing imports it, and it carried
+# PYSEC-2021-421, so it was removed rather than upgraded or ignored.
