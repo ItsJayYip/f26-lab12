@@ -4,6 +4,8 @@ on:
   push:
   pull_request:
 
+# Each check is its own job with no `needs:` between them, so they run in
+# parallel and one failure never hides another.
 jobs:
   test:
     name: pytest
@@ -24,3 +26,63 @@ jobs:
 
       - name: Run the test suite
         run: pytest
+
+  ruff:
+    name: ruff
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dev tools
+        run: pip install -r requirements-dev.txt
+
+      - name: Lint
+        run: ruff check .
+
+  mypy:
+    name: mypy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dev tools
+        run: pip install -r requirements-dev.txt
+
+      - name: Type check
+        run: mypy
+
+  pip-audit:
+    name: pip-audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-dev.txt
+
+      - name: Install dev tools
+        run: pip install -r requirements-dev.txt
+
+      - name: Audit runtime dependencies
+        run: pip-audit -r requirements.txt
